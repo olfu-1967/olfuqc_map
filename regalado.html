@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OLFU QC MAP/ Regalado</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/png" href="olfu-favicon.png">
+<link rel="stylesheet" href="regalado.css">
+</head>
+<body>
+  <div id="orientationWarning" class="orientation-warning">
+  Please rotate your device to landscape mode to view the map properly.
+</div>
+<div class="wrapper">
+  <div class="sidebar">
+    <img src="olfu-logo.png" alt="OLFU Logo" class="logo">
+    <div class="nav-buttons">
+
+      <a href="lagro.html" class="nav-button">Lagro</a>
+      <a href="regalado.html" class="nav-button active">Regalado</a>
+    </div>
+    <h2><br>OLFU QC<br><span>CAMPUS MAP</span></h2>
+
+    <b>Buildings</b>
+    <p>
+      <span onclick="highlightPin('College of Arts and Sciences')">🏫 Building 1</span><br>
+      <div style="margin-left: 20px; color:yellow;">
+        <span onclick="highlightPin('Health and Wellness Center')"></span><br>
+        <span onclick="highlightPin('Guidance')"></span><br>
+        <span onclick="highlightPin('Elite Center')"></span><br>
+      </div>
+      <span onclick="highlightPin('Vicente Santos Building')">🏫  Building 2</span><br>
+      <span onclick="highlightPin('San Jose Building')"> </span><br>
+      <div style="margin-left: 20px; color:yellow;">
+        <span onclick="highlightPin('Library')"></span><br>
+        <span onclick="highlightPin('SFS')"></span><br>
+        <span onclick="highlightPin('Auditorium')"></span><br>
+      </div>
+      <span onclick="highlightPin('Health and Wellness Center')">🏫 Fatima Eye and Rehab Center</span><br>
+      <span onclick="highlightPin('Athletic Center')"></span><br>
+      <span onclick="highlightPin('St. Agatha Building')"></span>
+    </p>
+
+    <b>Offices</b>
+    <p>
+      <span onclick="highlightPin('Admission')"></span><br>
+      <span onclick="highlightPin('NSTP/ OCCA/SOCI')"></span><br>
+      <span onclick="highlightPin('Registrar')"></span>
+    </p>
+
+    <b>Department</b>
+    <p>
+      <span onclick="highlightPin('Engineering')"></span>
+    </p>
+
+   
+  </div>
+  
+
+  <div class="map-container">
+    <div class="map-viewport">
+      <div class="map-inner" id="mapInner">
+        <img src="regalado.png" alt="Campus Map">
+        <img id="train" src="train.png" alt="Moving Train">
+        <img id="train2" src="train.png" alt="Moving Train 2">
+        
+        <!-- Map Pins -->
+        <div class="map-pin" style="left: 700px; top: 700px;" data-name="College of Arts and Sciences" data-images="Cas.jpg,1896.jpg"><img src="rlocation.png" alt="College of Arts and Sciences" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2270px; top: 50px;" data-name="Health and Wellness Center" data-images="clinic.jpg"><img src="clinicpin.png" alt="Clinic" style="width: 90px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1230px; top:510px; " data-name="Vicente Santos Building" data-images="vsb.jpeg"><img src="rlocation.png" alt="Vicente Santos Building" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+       
+        <!-- add other pins here... -->
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="popup" id="popup">
+  <p id="pinName"></p>
+  <img id="pinImage" src="" alt="Pin Image">
+  <div class="buttons">
+    <button onclick="prevImage()">Prev</button>
+    <button onclick="nextImage()">Next</button>
+  </div>
+</div>
+
+<script src="regalado.js"></script>
+</body>
+</html>

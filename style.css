@@ -1,0 +1,256 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ffffff;
+  color: black;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+.wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.sidebar {
+  background-color: #006838;
+  color: white;
+  padding: 20px;
+  width: 250px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.sidebar h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.sidebar span {
+  font-size: 20px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 5px 0;
+}
+
+.sidebar span:hover {
+  background-color: #f0f0f0;
+  color: black;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.sidebar b {
+  display: block;
+  margin-top: 30px;
+  font-size: 18px;
+  color: #FFD700;
+}
+
+.sidebar p {
+  margin-top: 10px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.map-container {
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+  background-color: #eee;
+}
+
+.map-viewport {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.map-inner {
+  cursor: grab;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  transition: transform 0.1s ease-in-out;
+}
+
+.map-inner img {
+  max-width: 3100px;
+  height: auto;
+  display: block;
+  image-rendering: auto;
+}
+
+.map-inner.grabbing {
+  cursor: grabbing;
+}
+
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 50px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.map-pin.highlighted {
+  animation: heartbeat 1.5s infinite ease-in-out;
+  text-shadow: 0 0 50px gold;
+  z-index: 1000;
+}
+
+@keyframes heartbeat {
+  0% { transform: translate(-50%, -100%) scale(1); }
+  25% { transform: translate(-50%, -100%) scale(1.4); }
+  50% { transform: translate(-50%, -100%) scale(1.2); }
+  75% { transform: translate(-50%, -100%) scale(1.4); }
+  100% { transform: translate(-50%, -100%) scale(1); }
+}
+
+.popup {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 999;
+  width: 200px;
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.popup img {
+  width: 100%;
+  height: auto;
+}
+
+.popup .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+
+.popup button {
+  padding: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* 📱 Mobile Layout */
+/*@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .sidebar h2 {
+    font-size: 20px;
+  }
+
+  .sidebar b {
+    font-size: 16px;
+  }
+
+  .sidebar span {
+    font-size: 18px;
+  }
+
+  .map-container {
+    height: calc(100vh - 300px);
+  }
+}
+/* 🔍 Make map fill remaining space on mobile */
+/* @media (max-width: 768px) {
+.map-container {
+  flex-grow: 1;
+  height: auto;
+}
+
+/* .map-viewport {
+  height: 100%;
+  width: 100%;
+}
+}*/
+.orientation-warning {
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background: #006838;
+color: white;
+display: none;
+justify-content: center;
+align-items: center;
+text-align: center;
+z-index: 9999;
+font-size: 24px;
+padding: 20px;
+}
+body {
+-webkit-user-select: none;
+user-select: none;
+touch-action: none;
+}
+.logo {
+background-color: white;
+border-radius: 100px;
+width: 100px;
+height: auto;
+display: block;
+margin: 0 auto 10px;
+}
+#walker {
+  position: absolute;
+  top: 200px;
+  left: 600px;
+  width: 100px;
+  height: auto;
+  transition: top 0.00s linear, left 0.00s linear;
+}
+
+
+.nav-buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.nav-button {
+    width: 80%;
+    padding: 12px 0;
+    text-align: center;
+    background-color: #007f4e; /* OLFU green */
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .nav-button:hover {
+    background-color: #005f3b; /* Darker green on hover */
+  }
+  
+  .nav-button.active {
+    border: 2px solid #c9b037; /* Darkest green for active */
+    background-color: #004e31;  /* Gold border for highlight */
+  }
+  
+
+
+

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OLFU QC MAP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: black;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .wrapper {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .sidebar {
+      background-color: white;
+      padding: 40px 20px;
+      width: 250px;
+      height: 100vh;
+      border-right: 1px solid #ccc;
+      color: black;
+    }
+
+    .sidebar h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar span {
+      font-size: 20px;
+    }
+
+    .sidebar b {
+      display: block;
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    .sidebar p {
+      margin-top: 10px;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .pin-icon {
+      font-size: 20px;
+      margin-top: 15px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .map-container {
+      flex-grow: 1;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background-color: #eee;
+    }
+
+    .map-viewport {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .map-inner {
+  cursor: grab;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.5); /* default scale */
+  transition: transform 0.1s ease-in-out;
+}
+
+
+    .map-inner img {
+  max-width: 2250px;
+  height: auto;
+  display: block;
+  image-rendering: auto; /* smooth */
+  
+}
+
+
+    .map-inner.grabbing {
+      cursor: grabbing;
+    }
+
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      font-size: 50px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .popup {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      z-index: 999;
+      width: 200px;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .popup img {
+      width: 100%;
+      height: auto;
+    }
+
+    .popup button {
+      padding: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .sidebar {
+  background-color: white;
+  padding: 40px 20px;
+  width: 250px;
+  height: 100vh;
+  border-right: 1px solid #ccc;
+  color: black;
+  overflow-y: auto; /* ✅ ito ang dinagdag */
+}
+
+.map-pin.highlighted {
+  transform: translate(-50%, -100%) scale(1.5);
+  box-shadow: 0 0 10px 5px yellow;
+  z-index: 1000;
+}
+
+.sidebar span[onclick] {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar span[onclick]:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="sidebar" style="background-color: #006838; color: white;">
+      <h2 style="color: white;">ADMIN<br><span style="color: white;">OLFU QC<br><span style="font-size: 18px; color: #C8E6C9;">CAMPUS MAP</span></h2>
+  
+      <b style="color: #FFD700;">Buildings</b>
+      <p>
+        <span onclick="highlightPin('CAS')">🏫 CAS</span><br>
+        <span onclick="highlightPin('HS')">🏫 HS</span><br>
+        <span onclick="highlightPin('SJB')">🏫 SJB</span><br>
+        <span onclick="highlightPin('BSED')">🏫 BSED</span><br>
+        <span onclick="highlightPin('Athletic Center')">🏟️ Athletic Center</span><br>
+        <span onclick="highlightPin('Nursing')">🏥 NURSING</span>
+      </p>
+  
+      <b style="color: #FFD700;">Offices</b>
+      <p>
+        <span onclick="highlightPin('Admission')">📝 Admission</span><br>
+        <span onclick="highlightPin('Curriculum')">📝 Curriculum</span><br>
+        <span onclick="highlightPin('Registrar')">📂 Registrar</span><br>
+      </p>
+  
+      <b style="color: #FFD700;">Department</b>
+      <p>
+        <span onclick="highlightPin('Engineering')">🛠️ Engineering</span><br>
+      </p>
+
+    <b>Icons</b>
+    <div class="pin-icon" draggable="true" data-type="Admission">📝 Admission</div>
+    <div class="pin-icon" draggable="true" data-type="Registrar">📂 Registrar</div>
+    <div class="pin-icon" draggable="true" data-type="Curriculum">📝 Curriculum</div>
+    <div class="pin-icon" draggable="true" data-type="CAS">🏫 CAS</div>
+    <div class="pin-icon" draggable="true" data-type="SJB">🏫 SJB</div>
+    <div class="pin-icon" draggable="true" data-type="HS">🏫 HS</div>
+    <div class="pin-icon" draggable="true" data-type="Athletic Center">🏟️ AC</div>
+    <div class="pin-icon" draggable="true" data-type="BSED">🏫 BSED</div>
+    <div class="pin-icon" draggable="true" data-type="Nursing">🏥 Nursing</div>
+    <div class="pin-icon" draggable="true" data-type="Engineering">🛠️ Engineering</div>
+    <button id="clearPinsBtn" style="margin-top: 20px; padding: 8px; font-size: 14px; cursor: pointer;">🗑️ Clear All Pins</button>
+    <button id="savePinsBtn" style="margin-top: 10px; padding: 8px; font-size: 14px; cursor: pointer;">💾 Save Pins</button>
+
+    
+  </div>
+
+  <div class="map-container">
+    <div class="map-viewport" id="dropZone">
+      <div class="map-inner" id="mapInner">
+        <img src="mapsu-picaai.png" alt="Campus Map">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Popup for Pin Interaction -->
+<div class="popup" id="popup">
+  <img id="popupImg" src="" style="display:none;">
+  <p id="pinName"></p>
+  <button id="removeBtn">Remove</button>
+</div>
+
+<script>
+  const popup = document.getElementById('popup');
+  const removeBtn = document.getElementById('removeBtn');
+  const popupImg = document.getElementById('popupImg');
+  const pinName = document.getElementById('pinName');
+  const dropZone = document.getElementById('mapInner');
+  let currentPin = null;
+
+  const pinData = {
+    "CAS": { image: "Cas.jpg", name: "CAS Building", color: "red", emoji: "🏫" },
+    "HS": { image: "HS.jpg", name: "HS Building", color: "blue", emoji: "🏫" },
+    "Nursing": { image: "Nursing.png", name: "Nursing Building", color: "green", emoji: "🏥" },
+    "Admission": { image: "bulaga.jpg", name: "Admission Office", color: "orange", emoji: "📝" },
+    "Curriculum": { image: "bulaga.jpg", name: "Curriculum Office", color: "orange", emoji: "📝" },
+    "Registrar": { image: "taviel.jpg", name: "Registrar Office", color: "purple", emoji: "📂" },
+    "Athletic Center": { image: "AC.jpg", name: "Athletic Center", color: "teal", emoji: "🏟️" },
+    "SJB": { image: "SJB.png", name: "SJB Building", color: "maroon", emoji: "🏫" },
+    "BSED": { image: "bd.jpg", name: "BSED Building", color: "brown", emoji: "🏫" },
+    "Engineering": { image: "Blumentritt.jpg", name: "Engineering Department", color: "darkcyan", emoji: "🛠️" }
+  };
+
+  document.querySelectorAll('.pin-icon').forEach(pin => {
+    pin.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', pin.dataset.type);
+    });
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  // ✅ FIXED PIN PLACEMENT WITH SCALE & PAN ADJUSTMENT
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const rect = dropZone.getBoundingClientRect();
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+
+    const adjustedX = (rawX - pos.x) / scale;
+    const adjustedY = (rawY - pos.y) / scale;
+
+    const type = e.dataTransfer.getData('text/plain');
+    const pinID = generateUniqueID();
+    const pin = createPin(adjustedX, adjustedY, pinID, type);
+    savePinToLocalStorage(adjustedX, adjustedY, pinID, type);
+  });
+
+  function generateUniqueID() {
+    return 'pin_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  function createPin(x, y, id, type) {
+    const pin = document.createElement('div');
+    pin.classList.add('map-pin');
+
+    const data = pinData[type] || { image: "", name: type, color: "black", emoji: "" };
+    pin.innerHTML = data.emoji;
+    pin.style.left = `${x}px`;
+    pin.style.top = `${y}px`;
+    pin.id = id;
+
+    pin.dataset.img = data.image;
+    pin.dataset.name = data.name;
+    pin.style.color = data.color;
+
+    dropZone.appendChild(pin);
+    attachPopupEvents(pin);
+    return pin;
+  }
+
+  function attachPopupEvents(pin) {
+    pin.addEventListener('click', (event) => {
+      event.stopPropagation();
+      currentPin = pin;
+      const pinRect = pin.getBoundingClientRect();
+      popup.style.left = pinRect.left + 'px';
+      popup.style.top = pinRect.top + 'px';
+      popup.style.display = 'flex';
+      popupImg.src = pin.dataset.img;
+      popupImg.style.display = 'block';
+      pinName.textContent = pin.dataset.name;
+    });
+  }
+
+  removeBtn.addEventListener('click', () => {
+    if (currentPin) {
+      const id = currentPin.id;
+      removePinFromLocalStorage(id);
+      currentPin.remove();
+      popup.style.display = 'none';
+    }
+  });
+
+  function savePinToLocalStorage(x, y, id, type) {
+    const pins = JSON.parse(localStorage.getItem('pins') || '[]');
+    pins.push({ x, y, id, type });
+    localStorage.setItem('pins', JSON.stringify(pins));
+  }
+
+  function removePinFromLocalStorage(id) {
+    let pins = JSON.parse(localStorage.getItem('pins') || '[]');
+    pins = pins.filter(pin => pin.id !== id);
+    localStorage.setItem('pins', JSON.stringify(pins));
+  }
+
+  document.addEventListener('click', () => {
+    popup.style.display = 'none';
+  });
+
+  popup.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const pins = JSON.parse(localStorage.getItem('pins') || '[]');
+    pins.forEach(({ x, y, id, type }) => {
+      createPin(x, y, id, type);
+    });
+  });
+
+  // ✅ Zoom and Pan Logic
+  const mapInner = document.getElementById('mapInner');
+  let scale = 0.5;
+  let pos = { x: 0, y: 0 };
+  let isDragging = false;
+  let dragStart = { x: 0, y: 0 };
+
+  function updateTransform() {
+    mapInner.style.transform = `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
+  }
+
+  document.querySelector('.map-viewport').addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomAmount = 0.1;
+    const direction = e.deltaY > 0 ? -1 : 1;
+    scale = Math.min(Math.max(scale + direction * zoomAmount, 0.5), 3);
+    updateTransform();
+  });
+
+  mapInner.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStart.x = e.clientX - pos.x;
+    dragStart.y = e.clientY - pos.y;
+    mapInner.classList.add('grabbing');
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    mapInner.classList.remove('grabbing');
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      pos.x = e.clientX - dragStart.x;
+      pos.y = e.clientY - dragStart.y;
+      updateTransform();
+    }
+  });
+
+  document.getElementById('clearPinsBtn').addEventListener('click', () => {
+    localStorage.removeItem('pins');
+    document.querySelectorAll('.map-pin').forEach(pin => pin.remove());
+    popup.style.display = 'none';
+  });
+
+  function highlightPin(type) {
+    // Alisin muna ang lahat ng naka-highlight
+    document.querySelectorAll('.map-pin').forEach(pin => {
+      pin.classList.remove('highlighted');
+    });
+
+    // Hanapin ang pin batay sa type
+    const pin = Array.from(document.querySelectorAll('.map-pin')).find(p => p.dataset.name?.toLowerCase().includes(type.toLowerCase()));
+    
+    if (pin) {
+      pin.classList.add('highlighted');
+      // Alisin ang highlight after 2 seconds
+      setTimeout(() => pin.classList.remove('highlighted'), 2000);
+    } else {
+      alert(type + ' is not placed on the map yet.');
+    }
+  }
+
+  document.getElementById('savePinsBtn').addEventListener('click', () => {
+  const pins = localStorage.getItem('pins');
+  if (pins) {
+    alert('✅ Pins saved! They are now available in the view-only version.');
+  } else {
+    alert('⚠️ No pins to save.');
+  }
+});
+</script>
+
+
+</body>
+</html>
