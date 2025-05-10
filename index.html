@@ -2,414 +2,108 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>OLFU QC MAP</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: #ffffff;
-      color: black;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
-
-    .wrapper {
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-    }
-
-    .sidebar {
-      background-color: white;
-      padding: 40px 20px;
-      width: 250px;
-      height: 100vh;
-      border-right: 1px solid #ccc;
-      color: black;
-    }
-
-    .sidebar h2 {
-      font-size: 26px;
-      margin-bottom: 20px;
-    }
-
-    .sidebar span {
-      font-size: 20px;
-    }
-
-    .sidebar b {
-      display: block;
-      margin-top: 30px;
-      font-size: 18px;
-    }
-
-    .sidebar p {
-      margin-top: 10px;
-      line-height: 1.6;
-      font-size: 16px;
-    }
-
-    .pin-icon {
-      font-size: 20px;
-      margin-top: 15px;
-      cursor: grab;
-      user-select: none;
-    }
-
-    .map-container {
-      flex-grow: 1;
-      height: 100vh;
-      overflow: hidden;
-      position: relative;
-      background-color: #eee;
-    }
-
-    .map-viewport {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
-    }
-
-    .map-inner {
-  cursor: grab;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.5); /* default scale */
-  transition: transform 0.1s ease-in-out;
-}
-
-
-    .map-inner img {
-  max-width: 2250px;
-  height: auto;
-  display: block;
-  image-rendering: auto; /* smooth */
-  
-}
-
-
-    .map-inner.grabbing {
-      cursor: grabbing;
-    }
-
-    .map-pin {
-      position: absolute;
-      transform: translate(-50%, -100%);
-      font-size: 50px;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .popup {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      z-index: 999;
-      width: 200px;
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .popup img {
-      width: 100%;
-      height: auto;
-    }
-
-    .popup button {
-      padding: 4px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .sidebar {
-  background-color: white;
-  padding: 40px 20px;
-  width: 250px;
-  height: 100vh;
-  border-right: 1px solid #ccc;
-  color: black;
-  overflow-y: auto; /* ✅ ito ang dinagdag */
-}
-
-.map-pin.highlighted {
-  transform: translate(-50%, -100%) scale(1.5);
-  box-shadow: 0 0 10px 5px yellow;
-  z-index: 1000;
-}
-
-.sidebar span[onclick] {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.sidebar span[onclick]:hover {
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-  </style>
+  <title>OLFU QC MAP/ Lagro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/png" href="olfu-favicon.png">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="orientationWarning" class="orientation-warning">
+  Please rotate your device to landscape mode to view the map properly.
+</div>
+<div class="wrapper">
+  <div class="sidebar">
+    <img src="olfu-logo.png" alt="OLFU Logo" class="logo">
 
-  <div class="wrapper">
-    <div class="sidebar" style="background-color: #006838; color: white;">
-      <h2 style="color: white;">ADMIN<br><span style="color: white;">OLFU QC<br><span style="font-size: 18px; color: #C8E6C9;">CAMPUS MAP</span></h2>
-  
-      <b style="color: #FFD700;">Buildings</b>
-      <p>
-        <span onclick="highlightPin('CAS')">🏫 CAS</span><br>
-        <span onclick="highlightPin('HS')">🏫 HS</span><br>
-        <span onclick="highlightPin('SJB')">🏫 SJB</span><br>
-        <span onclick="highlightPin('BSED')">🏫 BSED</span><br>
-        <span onclick="highlightPin('Athletic Center')">🏟️ Athletic Center</span><br>
-        <span onclick="highlightPin('Nursing')">🏥 NURSING</span>
-      </p>
-  
-      <b style="color: #FFD700;">Offices</b>
-      <p>
-        <span onclick="highlightPin('Admission')">📝 Admission</span><br>
-        <span onclick="highlightPin('Curriculum')">📝 Curriculum</span><br>
-        <span onclick="highlightPin('Registrar')">📂 Registrar</span><br>
-      </p>
-  
-      <b style="color: #FFD700;">Department</b>
-      <p>
-        <span onclick="highlightPin('Engineering')">🛠️ Engineering</span><br>
-      </p>
+    <div class="nav-buttons">
+      <a href="lagro.html" class="nav-button active">Lagro</a>
+      <a href="regalado.html" class="nav-button">Regalado</a>
+    </div>
 
-    <b>Icons</b>
-    <div class="pin-icon" draggable="true" data-type="Admission">📝 Admission</div>
-    <div class="pin-icon" draggable="true" data-type="Registrar">📂 Registrar</div>
-    <div class="pin-icon" draggable="true" data-type="Curriculum">📝 Curriculum</div>
-    <div class="pin-icon" draggable="true" data-type="CAS">🏫 CAS</div>
-    <div class="pin-icon" draggable="true" data-type="SJB">🏫 SJB</div>
-    <div class="pin-icon" draggable="true" data-type="HS">🏫 HS</div>
-    <div class="pin-icon" draggable="true" data-type="Athletic Center">🏟️ AC</div>
-    <div class="pin-icon" draggable="true" data-type="BSED">🏫 BSED</div>
-    <div class="pin-icon" draggable="true" data-type="Nursing">🏥 Nursing</div>
-    <div class="pin-icon" draggable="true" data-type="Engineering">🛠️ Engineering</div>
-    <button id="clearPinsBtn" style="margin-top: 20px; padding: 8px; font-size: 14px; cursor: pointer;">🗑️ Clear All Pins</button>
-    <button id="savePinsBtn" style="margin-top: 10px; padding: 8px; font-size: 14px; cursor: pointer;">💾 Save Pins</button>
+    <h2><br>OLFU QC<br><span>CAMPUS MAP</span></h2>
+  
+    <b>Buildings</b>
+    <p>
+      <span onclick="highlightPin('College of Arts and Sciences')">🏫 CAS- College of Arts and Sciences</span><br>
+      <div style="margin-left: 20px; color:yellow;">
+        <span onclick="highlightPin('Health and Wellness Center')">🩺Clinic</span><br>
+        <span onclick="highlightPin('Guidance')">🤝 Guidance</span><br>
+        <span onclick="highlightPin('Elite Center')">⚙️ Elite Center</span><br>
+      </div>
+      <span onclick="highlightPin('Vicente Santos Building')">🏫 VSB- Vicente Santos Building </span><br>
+      <span onclick="highlightPin('San Jose Building')">🏫 SJB- San Jose Building </span><br>
+      <div style="margin-left: 20px; color:yellow;">
+        <span onclick="highlightPin('Library')">📚 Library</span><br>
+        <span onclick="highlightPin('SFS')">💵 SFS</span><br>
+        <span onclick="highlightPin('Auditorium')">🎤 Auditorium</span><br>
+      </div>
+      <span onclick="highlightPin('High School Building')">🏫 HS- High School Building</span><br>
+      <span onclick="highlightPin('Athletic Center')">🏟️ AC- Athletic Center</span><br>
+      <span onclick="highlightPin('St. Agatha Building')">🏥 SAB- St. Agatha Building </span>
+    </p>
 
-    
+    <b>Offices</b>
+    <p>
+      <span onclick="highlightPin('Admission')">📝 Admissions</span><br>
+      <span onclick="highlightPin('NSTP/ OCCA/SOCI')">📝 NSTP/ OCCA/SOCI</span><br>
+      <span onclick="highlightPin('Registrar')">📂 Registrar</span>
+    </p>
+
+    <b>Department</b>
+    <p>
+      <span onclick="highlightPin('Engineering')">🛠️ Engineering</span>
+    </p>
+
+    <b>Others</b>
+    <p>
+      <span onclick="highlightPin('Park')">
+        <img src="park-removebg-preview.png" alt="Parking OLFU" style="width: 30px; height: 30px; vertical-align: middle; margin-right: 5px;">
+        Parking OLFU Park and Chapel
+      </span>
+    </p>
   </div>
+  
 
   <div class="map-container">
-    <div class="map-viewport" id="dropZone">
+    <div class="map-viewport">
       <div class="map-inner" id="mapInner">
-        <img src="mapsu-picaai.png" alt="Campus Map">
+        <img src="mapa-ko1.jpg" alt="Campus Map">
+        <img id="walker" src="walkingperson.gif" alt="Walking Person">
+        
+        <!-- Map Pins -->
+        <div class="map-pin" style="left: 1810px; top: 350px;" data-name="College of Arts and Sciences" data-images="Cas.jpg"><img src="rlocation.png" alt="College of Arts and Sciences" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1900px; top: 320px;" data-name="Health and Wellness Center" data-images="clinic.jpg"><img src="clinicpin.png" alt="Clinic" style="width: 90px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1980px; top: 310px;" data-name="Center For Guidance Service" data-images="guidance.jpg"><img src="guidancepin.png" alt="Guidance" style="width: 90px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2070px; top: 280px;" data-name="Elite Center" data-images="elite.jpg"><img src="elitepin.png" alt="Elite Center" style="width: 90px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2700px; top:850px; " data-name="Vicente Santos Building" data-images="vsb.jpeg"><img src="rlocation.png" alt="Vicente Santos Building" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2100px; top: 690px; " data-name="San Jose Building" data-images="SJB.png"><img src="rlocation.png" alt="San Jose Building" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2280px; top: 700px; " data-name="(F-3 and 4) Library" data-images="library.jpeg"><img src="librarypin.png" alt="Library" style="width: 85px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2380px; top: 670px; " data-name="Ground- SFS" data-images="sfs.jpg"><img src="sfspin.png" alt="SFS" style="width: 85px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2220px; top: 750px; " data-name="(F-7th) Auditorium" data-images="audi2.jpg,audi1.jpg"><img src="audipin.png" alt="Auditorium" style="width: 90px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1700px; top: 130px; " data-name="High School Building" data-images="HS.jpg"><img src="rlocation.png" alt="High School Building" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1550px; top: 950px; " data-name="Athletic Center" data-images="ac1.jpeg,AC.jpg"><img src="rlocation.png" alt="AC" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1600px; top: 1330px; " data-name="St. Agatha Building" data-images="nurs1.jpeg,nurs2.jpg"><img src="rlocation.png" alt="St. Agatha Building" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1220px; top: 590px; " data-name="Admissions" data-images="admis1.jpeg,admissions.jpeg"><img src="rlocation.png" alt="Admissions" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1590px; top: 570px; " data-name="NSTP/ OCCA/SOCI" data-images="soci1.jpg"><img src="rlocation.png" alt="SOCI" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 2190px; top: 410px; " data-name="Registrar" data-images="reg1.jpg"><img src="rlocation.png" alt="Registrar" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1550px; top: 440px; " data-name="Engineering" data-images="eng1.jpg"><img src="rlocation.png" alt="Engineering" style="width: 100px; height: 100px; vertical-align: middle; margin-right: 5px;"></div>
+        <div class="map-pin" style="left: 1210px; top: 790px; " data-name="Parking OLFU Park and Chapel" data-images="chapel1.jpg"><img src="chappin.png" alt="Parking OLFU" style="width: 120px; height: 120px; vertical-align: middle; margin-right: 5px;"></div>
+        
+        <!-- add other pins here... -->
       </div>
     </div>
   </div>
 </div>
 
-<!-- Popup for Pin Interaction -->
 <div class="popup" id="popup">
-  <img id="popupImg" src="" style="display:none;">
   <p id="pinName"></p>
-  <button id="removeBtn">Remove</button>
+  <img id="pinImage" src="" alt="Pin Image">
+  <div class="buttons">
+    <button onclick="prevImage()">Prev</button>
+    <button onclick="nextImage()">Next</button>
+  </div>
 </div>
 
-<script>
-  const popup = document.getElementById('popup');
-  const removeBtn = document.getElementById('removeBtn');
-  const popupImg = document.getElementById('popupImg');
-  const pinName = document.getElementById('pinName');
-  const dropZone = document.getElementById('mapInner');
-  let currentPin = null;
-
-  const pinData = {
-    "CAS": { image: "Cas.jpg", name: "CAS Building", color: "red", emoji: "🏫" },
-    "HS": { image: "HS.jpg", name: "HS Building", color: "blue", emoji: "🏫" },
-    "Nursing": { image: "Nursing.png", name: "Nursing Building", color: "green", emoji: "🏥" },
-    "Admission": { image: "bulaga.jpg", name: "Admission Office", color: "orange", emoji: "📝" },
-    "Curriculum": { image: "bulaga.jpg", name: "Curriculum Office", color: "orange", emoji: "📝" },
-    "Registrar": { image: "taviel.jpg", name: "Registrar Office", color: "purple", emoji: "📂" },
-    "Athletic Center": { image: "AC.jpg", name: "Athletic Center", color: "teal", emoji: "🏟️" },
-    "SJB": { image: "SJB.png", name: "SJB Building", color: "maroon", emoji: "🏫" },
-    "BSED": { image: "bd.jpg", name: "BSED Building", color: "brown", emoji: "🏫" },
-    "Engineering": { image: "Blumentritt.jpg", name: "Engineering Department", color: "darkcyan", emoji: "🛠️" }
-  };
-
-  document.querySelectorAll('.pin-icon').forEach(pin => {
-    pin.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('text/plain', pin.dataset.type);
-    });
-  });
-
-  dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-
-  // ✅ FIXED PIN PLACEMENT WITH SCALE & PAN ADJUSTMENT
-  dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const rect = dropZone.getBoundingClientRect();
-    const rawX = e.clientX - rect.left;
-    const rawY = e.clientY - rect.top;
-
-    const adjustedX = (rawX - pos.x) / scale;
-    const adjustedY = (rawY - pos.y) / scale;
-
-    const type = e.dataTransfer.getData('text/plain');
-    const pinID = generateUniqueID();
-    const pin = createPin(adjustedX, adjustedY, pinID, type);
-    savePinToLocalStorage(adjustedX, adjustedY, pinID, type);
-  });
-
-  function generateUniqueID() {
-    return 'pin_' + Math.random().toString(36).substr(2, 9);
-  }
-
-  function createPin(x, y, id, type) {
-    const pin = document.createElement('div');
-    pin.classList.add('map-pin');
-
-    const data = pinData[type] || { image: "", name: type, color: "black", emoji: "" };
-    pin.innerHTML = data.emoji;
-    pin.style.left = `${x}px`;
-    pin.style.top = `${y}px`;
-    pin.id = id;
-
-    pin.dataset.img = data.image;
-    pin.dataset.name = data.name;
-    pin.style.color = data.color;
-
-    dropZone.appendChild(pin);
-    attachPopupEvents(pin);
-    return pin;
-  }
-
-  function attachPopupEvents(pin) {
-    pin.addEventListener('click', (event) => {
-      event.stopPropagation();
-      currentPin = pin;
-      const pinRect = pin.getBoundingClientRect();
-      popup.style.left = pinRect.left + 'px';
-      popup.style.top = pinRect.top + 'px';
-      popup.style.display = 'flex';
-      popupImg.src = pin.dataset.img;
-      popupImg.style.display = 'block';
-      pinName.textContent = pin.dataset.name;
-    });
-  }
-
-  removeBtn.addEventListener('click', () => {
-    if (currentPin) {
-      const id = currentPin.id;
-      removePinFromLocalStorage(id);
-      currentPin.remove();
-      popup.style.display = 'none';
-    }
-  });
-
-  function savePinToLocalStorage(x, y, id, type) {
-    const pins = JSON.parse(localStorage.getItem('pins') || '[]');
-    pins.push({ x, y, id, type });
-    localStorage.setItem('pins', JSON.stringify(pins));
-  }
-
-  function removePinFromLocalStorage(id) {
-    let pins = JSON.parse(localStorage.getItem('pins') || '[]');
-    pins = pins.filter(pin => pin.id !== id);
-    localStorage.setItem('pins', JSON.stringify(pins));
-  }
-
-  document.addEventListener('click', () => {
-    popup.style.display = 'none';
-  });
-
-  popup.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
-
-  window.addEventListener('DOMContentLoaded', () => {
-    const pins = JSON.parse(localStorage.getItem('pins') || '[]');
-    pins.forEach(({ x, y, id, type }) => {
-      createPin(x, y, id, type);
-    });
-  });
-
-  // ✅ Zoom and Pan Logic
-  const mapInner = document.getElementById('mapInner');
-  let scale = 0.5;
-  let pos = { x: 0, y: 0 };
-  let isDragging = false;
-  let dragStart = { x: 0, y: 0 };
-
-  function updateTransform() {
-    mapInner.style.transform = `translate(-50%, -50%) translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
-  }
-
-  document.querySelector('.map-viewport').addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const zoomAmount = 0.1;
-    const direction = e.deltaY > 0 ? -1 : 1;
-    scale = Math.min(Math.max(scale + direction * zoomAmount, 0.5), 3);
-    updateTransform();
-  });
-
-  mapInner.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    dragStart.x = e.clientX - pos.x;
-    dragStart.y = e.clientY - pos.y;
-    mapInner.classList.add('grabbing');
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    mapInner.classList.remove('grabbing');
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
-      pos.x = e.clientX - dragStart.x;
-      pos.y = e.clientY - dragStart.y;
-      updateTransform();
-    }
-  });
-
-  document.getElementById('clearPinsBtn').addEventListener('click', () => {
-    localStorage.removeItem('pins');
-    document.querySelectorAll('.map-pin').forEach(pin => pin.remove());
-    popup.style.display = 'none';
-  });
-
-  function highlightPin(type) {
-    // Alisin muna ang lahat ng naka-highlight
-    document.querySelectorAll('.map-pin').forEach(pin => {
-      pin.classList.remove('highlighted');
-    });
-
-    // Hanapin ang pin batay sa type
-    const pin = Array.from(document.querySelectorAll('.map-pin')).find(p => p.dataset.name?.toLowerCase().includes(type.toLowerCase()));
-    
-    if (pin) {
-      pin.classList.add('highlighted');
-      // Alisin ang highlight after 2 seconds
-      setTimeout(() => pin.classList.remove('highlighted'), 2000);
-    } else {
-      alert(type + ' is not placed on the map yet.');
-    }
-  }
-
-  document.getElementById('savePinsBtn').addEventListener('click', () => {
-  const pins = localStorage.getItem('pins');
-  if (pins) {
-    alert('✅ Pins saved! They are now available in the view-only version.');
-  } else {
-    alert('⚠️ No pins to save.');
-  }
-});
-</script>
-
-
+<script src="script.js"></script>
 </body>
 </html>
